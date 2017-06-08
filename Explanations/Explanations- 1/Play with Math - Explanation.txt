@@ -1,0 +1,25 @@
+You would have been fed up with competitive programming questions so far, now it is time to solve little math.
+
+Assume you have a equation A * x - B * y = 0
+
+For a given value of A and B, find the minimum positive integer value of x and y that satisfies this equation.
+
+
+-----------------------------------------------------------------------
+
+Now, clearly x = B and y = A satisfy the solution, but this is not the minimum possible solution unless A and B are coprime.
+
+We want Ax = By
+
+Cancel out all the common factors of A and B,
+
+A = gcd(A, B) A'
+B = gcd(A, B) B'
+
+A'x = B'y
+
+Since there are no common factors, the only way this can be equal is if x = B' and y = A'.
+
+------------------------------------
+
+I used the Euclidean GCD algorithm because it was faster to code.
