@@ -1,0 +1,18 @@
+Very simple implementation.
+
+printf("%d\n",reverse( reverse(num_1) + reverse(num_2) ));
+
+-----------------
+int reverse(int number)
+{
+    const int base = 10;
+    int reverse = 0;
+
+    while(number > 0)
+    {
+        reverse = reverse*base + (number%base);
+        number /= base;
+    }
+
+    return reverse;
+}
