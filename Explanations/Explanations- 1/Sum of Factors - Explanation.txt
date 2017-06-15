@@ -1,0 +1,7 @@
+Sum of all divisors of a number including 1 and itself.
+
+The only trick is to add the square root only once if it exists, and solve the problem in O(root(n)) time.
+
+for(i = 1; i*i <= number; i++)
+        if(number%i == 0)
+            sum_of_divisors += (i*i == number ? i : i + number/i);             //Divisors come in pairs(i, N/i) except the square root(i, i)
