@@ -1,0 +1,66 @@
+A cube free number is a number who’s none of the divisor is a cube number 
+(A cube number is a cube of a integer like 8 (2 * 2 * 2) , 27 (3 * 3 * 3) ). So cube free numbers are 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18 etc 
+(we will consider 1 as cube free). 8, 16, 24, 27, 32 etc are not cube free number. So the position of 1 among the cube free numbers is 1, position of 2 is 2, 3 is 3 and 
+position of 10 is 9. Given a positive number you have to say if its a cube free number and if yes then tell its position among cube free numbers.
+
+--------------------------------------------------------
+
+Use a sieve to mark all primes and then for every prime p, cross out all multiples of p^3 ... Keep the index of all other primes...
+
+I was getting a runtime error until I got the insight that if we have to test until 1e6 ... we only need primes till 100 .. because 100^3 = 1e6. 
+Any prime after 100, will have a cube greater than 10^6 so it's not required.
+
+----------------------------------------------
+
+vector <int> is_cubefree(1e6 + 1, true);
+vector <int> cubefree_numbers_index(1e6 + 1, 0);
+
+void precompute_cubefree_numbers()
+{
+    vector <int> is_prime(100 + 1, true);
+    for(int i = 2; i <= 100; i++)
+    {
+        if(is_prime[i])
+        {
+            for(int multiple = 2*i; multiple <= 100; multiple += i)
+            {
+                is_prime[multiple] = false;
+            }
+
+            for(int cubes = i*i*i; cubes <= 1e6; cubes += i*i*i)
+            {
+                is_cubefree[cubes] = false;
+            }
+        }
+    }
+
+    int cubefree_index = 1;
+    for(int i = 1; i <= 1e6; i++)
+    {
+        if(is_cubefree[i])
+        {
+            cubefree_numbers_index[i] = cubefree_index;
+            cubefree_index++;
+        }
+    }
+}
+
+int main()
+{
+    int no_of_test_cases;
+    scanf("%d", &no_of_test_cases);
+
+    precompute_cubefree_numbers();
+
+    for(int i = 1; i <= no_of_test_cases; i++)
+    {
+        int query;
+        scanf("%d", &query);
+
+        printf("Case %d: ", i);
+        printf(is_cubefree[query] == false ? "Not Cube Free\n" : "%d\n",cubefree_numbers_index[query]);
+    }
+
+    return 0;
+}
+
