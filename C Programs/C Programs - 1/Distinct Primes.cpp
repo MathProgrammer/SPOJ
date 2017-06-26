@@ -7,16 +7,16 @@ vector <int> at_least_three_prime_factors;
 
 void precompute_prime_factors()
 {
-    vector <int> no_of_prime_factors(5000, 0);
+    vector <int> no_of_prime_factors(3000 + 1, 0);
 
-    for(int i = 2; i <= 5000; i++)
+    for(int i = 2; i <= 3000; i++)
         if(no_of_prime_factors[i] == 0)
-            for(int multiple = i; multiple <= 5000; multiple += i)
+            for(int multiple = i; multiple <= 3000; multiple += i)
             {
                 no_of_prime_factors[multiple]++;
             }
 
-    for(int i = 2; i <= 5000 && at_least_three_prime_factors.size() <= 1000; i++)
+    for(int i = 2; i <= 3000 && at_least_three_prime_factors.size() <= 1000; i++)
         if(no_of_prime_factors[i] >= 3)
             at_least_three_prime_factors.push_back(i);
 
