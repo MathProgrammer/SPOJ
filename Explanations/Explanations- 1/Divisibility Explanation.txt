@@ -1,0 +1,8 @@
+Straightforward Implementation.
+
+    multiple = x;
+    for(multiple = x; multiple <= limit; multiple += x)
+        if(multiple%y != 0)
+            printf("%d ", multiple);
+
+    printf("\n");
