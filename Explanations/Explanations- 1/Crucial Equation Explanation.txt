@@ -1,0 +1,49 @@
+Let us see the following equation,
+
+                                            ax+by=c
+
+Given three positive integers a, b and c. You have to determine whether there exists at least one solution for some integers value of x and y 
+where x, y may be negative or non-negative integers.
+
+For example if a=2, b=4 and c=8 then the equation will be 2x+4y=8, and hence, for x=2 and y=1, there exists a solution.
+
+Let us see another example for a=3, b=6 and c=7, so the equation will become 3x+6y=7 and there exists no solution satisfying this equation.
+
+---------------------------------------------------
+
+ax + by = c, has solution for  integers a and b if and only if c is divisible by gcd(a, b).
+
+If gcd(a, b) ... a = p.gcd(a, b) and b = q.gcd(a, b)
+
+Equation becomes ... gcd(a, b) [px + qy] = c ... Where p and q are coprime ... Clearly, if c is not divisible by gcd(a, b) ... there are no values of x and y satisfying
+equation ...
+
+Now to prove the if part, we need to prove that there always exists integers x and y, such that ax + by = gcd(a, b) ... If c is a multiple of gcd(a, b) .. we just 
+multiply the whole equation by k to get the answer
+
+k(ax + by) = k.gcd(a, b) = c
+
+This proofs requires induction and is difficult to write in text form here without latex.
+
+--------------------------------------
+
+I was shocked to see i got a WA ... and then I saw the comments down and it said that there needs to be a space in between : and Yes ... 
+I put it and got AC.
+
+-----------------------------------
+
+int main()
+{
+    int no_of_test_cases;
+    scanf("%d", &no_of_test_cases);
+
+    for(int i = 1; i <= no_of_test_cases; i++)
+    {
+        int a, b, c;
+        scanf("%d %d %d", &a, &b, &c);
+
+        printf("Case %d: ",i);
+        printf(c%gcd(max(a, b), min(a, b)) == 0 ? "Yes\n" : "No\n");
+    }
+    return 0;
+}
