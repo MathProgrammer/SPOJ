@@ -1,0 +1,99 @@
+
+-----------------------------------------------------
+
+1. First, build a vector of all primes which can be written as the sums of two squares ...
+
+(The only primes which can't be written as the sums of two squares are the primes = 3 (mod 4). Others are 1 (mod 4). )
+
+I made some mistakes in the sieve. I don't seem to be able to write a bug free sieve at first attempt somehow ....
+
+I initialised everything to false instead of to true ... Anyway include the primes mod 1 with 4 and 2 in the vector of primes ...
+
+void precompute_primes()
+{
+    const int limit = 8000;
+    vector <int> is_prime(limit + 1,true);
+    is_prime[0] = is_prime[1] = false;
+
+    for(int i = 2; i <= limit; i++)
+    {
+        if(is_prime[i])
+        {
+            for(int multiple = 2*i; multiple <= limit; multiple += i)
+            {
+                is_prime[multiple] = false;
+            }
+
+            if(i%4 != 3)
+                eligible_primes.push_back(i); //2 and all primes congruent 1 mod 4.
+        }
+    }
+}
+
+-------------------------------------------------------------
+
+2. Now, solve the coin change problem ... We have three coins k = 1, 2, 3...
+
+We need to know the number of ways these coins can make any sum in our set.
+The question says that the greatest element of this set is 8000 ...
+So , solve the coin change question up to 8000.
+
+f(i, j) be the number of ways to sum up to i where j is the biggest summand.
+
+f(0, j) = 1 for all j.
+
+f(i, j) = f(i, j - 1) + f(i - j, j) ... [Two options ... Either we use j. then f(i - j, j) or we don't use j f(i, j - 1).
+
+if i < j, then we don't have two options
+
+then, f(i, j) = f(i, j - 1)
+
+void precompute_no_of_summing_ways()
+{
+    int coin_value[4] = {0, 1, 2, 3};
+    const int no_of_coins = 4;
+
+    for(int coin_no = 1; coin_no < no_of_coins; coin_no++)
+    {
+        no_of_ways_to_make[0][coin_no] = 1;
+    }
+
+    for(int coin_no = 1; coin_no < no_of_coins; coin_no++)
+    {
+        for(int sum = 1; sum <= 8000; sum++)
+        {
+            if(sum >= coin_value[coin_no])
+            {
+                no_of_ways_to_make[sum][coin_no] = no_of_ways_to_make[sum][coin_no - 1] //Don't use current coin
+
+                                                    + no_of_ways_to_make[sum - coin_value[coin_no] ][coin_no]; //Use current coin
+            }
+            else
+            {
+                no_of_ways_to_make[sum][coin_no] = no_of_ways_to_make[sum][coin_no - 1];
+            }
+        }
+    }
+}
+
+-------------------------------------------------------
+
+int main()
+{
+    precompute_primes();
+    precompute_no_of_summing_ways();
+
+    int no_of_test_cases;
+    scanf("%d", &no_of_test_cases);
+
+    while(no_of_test_cases--)
+    {
+        int a, b;
+        scanf("%d %d", &a, &b);
+
+        printf("%d\n", no_of_ways_to_make[ eligible_primes[a - 1] ][b]);
+    }
+    return 0;
+}
+
+The primes are 0 indexed ... so we evaluate f(a - 1, b).
