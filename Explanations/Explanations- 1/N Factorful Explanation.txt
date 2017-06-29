@@ -1,0 +1,92 @@
+A number is called n-factorful if it has exactly n distinct prime factors. 
+Given positive integers a, b, and n, your task is to find the number of integers between a and b, inclusive, that are n-factorful. We consider 1 to be 0-factorful.
+
+----------------------------------------
+
+Codechef had a similar question with a less rigorous time limit ...
+
+Firstly, here's the logic to mark every number with the number of distinct prime factors ....
+
+Initially, everything is marked 0 ... STarting from i = 2, pick up a number that is marked 0 and increment i and all of i's multiples by 1.
+Eventually,  every number will be marked with the number of distinct prime factors it has ...
+
+Now, it is possible to go from A to B and 
+sum += (distinct_prime_factors[i] == n)
+
+But, this doesn't pass the time limit ...
+
+More pre-computation is required.
+
+----------------------------------------------------------------
+
+Let us imagine the question is only for a particular k = 2
+
+Then, To precopmute we write
+
+i = A to B, 
+	sum += (no_of_distinct_primes == 2) .............. 
+
+So, we store all sums from n = 1 to 10.
+
+---------------------------------------------------------------------
+
+Let f(i, j) denote the number of numbers with j distinct factors upto i.
+
+The recurrence is as follows - 
+1. 1 is 0-colourful.
+2. If the number i, is j colourful, then the number of j-colourful numbers till i, is one more than the number of j colourful numbers till i-1.
+
+3. Otherwise, if j is not j-colourful, then the number of j colourful number till i, is the same as the number of j colourful numbers till i - 1.
+
+So, f(i, j) = f(i - 1, j) for all j, AND
+   f(i, j) = f(i - 1, j) + 1, if the number i has j distinct factors.
+
+------------------------------------------------------
+
+Answer is f(right, n) - f(left - 1, n)
+
+-------------------------------------------------------------------------
+
+vector <vector <int> > no_of_n_colourful_numbers_till(1e6 + 1, vector <int> (10 + 1, 0));
+
+void precompute_prime_factors()
+{
+    vector <int> no_of_distinct_prime_factors(1e6 + 1, 0);
+
+    for(int i = 2; i <= 1e6; i++)
+    {
+        if(no_of_distinct_prime_factors[i] == 0)
+        {
+            for(int j = i; j <= 1e6; j +=i)
+            {
+                no_of_distinct_prime_factors[j]++;
+            }
+        }
+    }
+
+    for(int i = 1; i <= 1e6; i++)
+    {
+        for(int j = 1; j <= 10; j++)
+        {
+            no_of_n_colourful_numbers_till[i][j] = no_of_n_colourful_numbers_till[i - 1][j];
+        }
+        no_of_n_colourful_numbers_till[i][no_of_distinct_prime_factors[i] ]++;
+    }
+
+}
+
+
+This part precomputes the number of numbers with j distinct prime factors less than i, for all i from i = 1 to 1e6 and all j = 1 to 10.
+
+--------------------------------------------------------------------------
+
+void solve()
+{
+    int a, b, left, right, n;
+    scanf("%d %d %d", &a, &b, &n);
+
+    left = min(a, b);
+    right = max(a, b);
+
+    printf("%d\n", no_of_n_colourful_numbers_till[right][n] - no_of_n_colourful_numbers_till[left - 1][n]);
+}
