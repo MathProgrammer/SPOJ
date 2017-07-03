@@ -1,8 +1,23 @@
-Straightforward Implementation.
+Print all integers ai such that ai is divisible by x and not divisible by y, 
 
-    multiple = x;
-    for(multiple = x; multiple <= limit; multiple += x)
+------------------------------------------
+
+Simple implementation ... Do addition instead of multiplication as it is less work but it really makes no discernible difference to modern hardware.
+
+void solve()
+{
+    int n, x, y;
+    scanf("%d %d %d", &n, &x, &y);
+
+    for(int multiple = x; multiple <= n; multiple += x)
+    {
         if(multiple%y != 0)
-            printf("%d ", multiple);
-
+        {
+            printf("%d ",multiple);
+        }
+    }
     printf("\n");
+}
+
+Don't forget the newline !
+
