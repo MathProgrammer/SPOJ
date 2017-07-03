@@ -1,15 +1,17 @@
-#include <stdio.h>
+#include <cstdio>
 
 void solve()
 {
-    int multiple, limit, x, y;
-    scanf("%d %d %d", &limit, &x, &y);
+    int n, x, y;
+    scanf("%d %d %d", &n, &x, &y);
 
-    multiple = x;
-    for(multiple = x; multiple <= limit; multiple += x)
+    for(int multiple = x; multiple <= n; multiple += x)
+    {
         if(multiple%y != 0)
-            printf("%d ", multiple);
-
+        {
+            printf("%d ",multiple);
+        }
+    }
     printf("\n");
 }
 
