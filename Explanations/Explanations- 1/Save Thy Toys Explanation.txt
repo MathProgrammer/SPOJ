@@ -1,0 +1,44 @@
+The trick is to look for optimal choice.
+
+A one dimensional DP is enough. Let f(i) be the best saving possible till i. 
+
+If there is only one toy, 2 toys, or 3 toys... Take all of them.
+
+Otherwise, f(i) = max(C[i] + f(i + 2), C[i] + C[i + 1] + f(i + 4), C[i] + C[i + 1] + C[i + 2] + f(i + 6))
+
+Each option corresponds with taking 1 toy, 2 toys or 3 toys respectively.
+
+Here, f(i) depends on a future i instead of a previous i ... so start from the last i and go down to 1.
+
+--------------------------------------------------
+
+I got a few RTEs here because I tried to write the bases cases out of the loop. f(i - 2) causes an out of bound reference. 
+
+Solution is to pad up f with a few 0s ... (6 to be precise).
+
+--------------------------------------
+
+
+void solve()
+{
+    int no_of_toys;
+    scanf("%d", &no_of_toys);
+
+    vector <int> cost(no_of_toys + 10);
+    for(int i = 1; i <= no_of_toys; i++)
+        scanf("%d", &cost[i]);
+
+    vector <long long> maximum_saving_starting_from(no_of_toys + 10, 0);
+
+    for(int i = no_of_toys; i >= 1; i--)
+    {
+        maximum_saving_starting_from[i] = max_3( (cost[i] + maximum_saving_starting_from[i + 2]), //Take one toy
+
+                                                (cost[i] + cost[i + 1] + maximum_saving_starting_from[i + 4]), //Take two toys
+
+                                                cost[i] + cost[i + 1] + cost[i + 2] + maximum_saving_starting_from[i + 6]) ); //Take three toys
+
+    }
+
+    printf("%lld\n", maximum_saving_starting_from[1]);
+} 
