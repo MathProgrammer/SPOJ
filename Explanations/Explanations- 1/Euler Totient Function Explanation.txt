@@ -1,0 +1,80 @@
+
+-------------------------------------------
+
+I wasn't sure if a solution based on O(root(n)) factorisation was going to pass but it did !
+
+Here's what I remembered about the Euler Totient Function - f(mn) = f(m)f(n), if gcd(m, n) = 1.
+
+And f(p) = p - 1, because a prime number is co prime to all numbers smaller than it. 
+
+Also, f(p^a) = p^a - p^{a - 1} ....  p^a is coprime to everything other than the multiples of p. There are (p^a/p = p^(a - 1)) multiples of p 
+
+So all that's left to do is factorise n = p^a, q^b, etc ....
+
+However raising to powers and calling the modular exponentiation function is overkill and not required. 
+
+I found a better form on wikipedia for computation. This can be easily derived.
+
+f(n) = n(1 - 1/p).(1 - 1/q) ... etc
+
+ = n(p - 1)(q - 1) ... /(p.q....)
+
+Rather than raise all the primes to one power less than their exponent in n. Divide n by the product of all it's prime factors.
+Multiply that with (p - 1) for all prime factors p.
+
+I made a common mistake in the sieve. Initialised everything to false instead of true, and wrote i instead of multiple. Also wrote > instead of < while
+checking it's prime divisors.
+Other than that this problem was a smooth and educational experience.
+
+--------------------------------------------
+
+void precompute_primes()
+{
+    vector <int> is_prime(1e6 + 1,true);
+    is_prime[0] = is_prime[1] = false;
+
+    for(int i = 2; i <= 1e6; i++)
+    {
+        if(is_prime[i])
+        {
+            for(long long multiple = i*1LL*i; multiple <= 1e6; multiple += i)
+            {
+                is_prime[multiple] = false;
+            }
+            prime.push_back(i);
+        }
+    }
+}
+
+void solve()
+{
+    int n;
+    scanf("%d", &n);
+
+    int original_n = n;
+    long long phi_n = 1LL, prime_product = 1LL;
+
+    for(unsigned int i = 0; prime[i]*1LL*prime[i] <= n; i++)
+    {
+        if(n%prime[i] == 0)
+        {
+            prime_product = prime_product*prime[i];
+            phi_n = phi_n*(prime[i] - 1);
+
+            while(n%prime[i] == 0)
+            {
+                n = n/prime[i];
+            }
+        }
+    }
+
+    if(n > 1)
+    {
+        prime_product = prime_product*n;
+        phi_n = phi_n*(n - 1);
+    }
+
+    phi_n = phi_n*(original_n/prime_product);
+
+    printf("%lld\n", phi_n);
+}
