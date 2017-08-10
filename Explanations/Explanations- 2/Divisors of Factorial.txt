@@ -1,0 +1,38 @@
+Consider the prime factorisation of any number n = p^a, p2^a2 ... pn^an
+
+Now, any factor of this number n, must in it's prime factorisation have a subset of these prime factors. 
+
+Therefore to construct every divisor, we construct every possible subset of these prime powers. 
+From the first set, we can choose either p, p^2, p^3 ... p^a or 1 ... So, we have (a + 1) choices for the first prime.
+
+So, we just find the exponents of all primes in n! ... And then prod(e_i + 1), where e_i is exponent of i-th prime.
+
+To calculate the exponent of a number in n!, notice that each multiple of p contributes 1 to the exponent, each multiple of p^2 contributes 2, p^3 3 and so on.
+
+------------------------------------------------
+
+void solve()
+{
+    int n;
+    scanf("%d", &n);
+
+    const int MOD = 1e9 + 7;
+    long long no_of_divisors = 1LL;
+
+    for(int prime_counter = 0; prime[prime_counter] <= n; prime_counter++)
+    {
+        int exponent_i = 0, prime_i = prime[prime_counter];
+        int prime_i_power = prime_i;
+
+        while(prime_i_power <= n)
+        {
+            exponent_i += n/prime_i_power;
+            prime_i_power *= prime_i;
+        }
+
+        no_of_divisors *= (exponent_i + 1)%MOD;
+        no_of_divisors = no_of_divisors%MOD;
+    }
+
+    printf("%lld\n", no_of_divisors);
+}
