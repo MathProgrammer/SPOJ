@@ -1,0 +1,55 @@
+One of the secret chambers in Hogwarts is full of philosopher’s stones. 
+The floor of the chamber is covered by h × w square tiles, where there are h rows of tiles from front (first row) to back (last row) and w columns 
+of tiles from left to right. Each tile has 1 to 100 stones on it.
+ Harry has to grab as many philosopher’s stones as possible, subject to the following restrictions:
+
+He starts by choosing any tile in the first row, and collects the philosopher’s stones on that tile. 
+Then, he moves to a tile in the next row, collects the philosopher’s stones on the tile, and so on until he reaches the last row.
+When he moves from one tile to a tile in the next row, he can only move to the tile just below it or diagonally to the left or right.
+Given the values of h and w, and the number of philosopher’s stones on each tile, 
+write a program to compute the maximum possible number of philosopher’s stones Harry can grab in one single trip from the first row to the last row.
+
+------------------------------------------------------------------------
+
+Let f(x, y) be the maximum stones possible in a path ending at (x, y).
+
+f(x, y) = stones(x, y) + max{f(x - 1, y - 1) + f(x - 1, y) + f(x - 1, y + 1)}
+
+Ans = max{f(x, y)}.
+
+TO avoid doing boundary checking and writing a different recurrence, I padded the table up with 0s on all sides. (1 extra row, 2 extra column) at either end.
+
+This can be computed while simultaneoulsy reading the input.
+
+----------------------------------------------------
+
+#define max_3(a, b, c) max(a, max(b, c))
+using namespace std;
+
+void solve()
+{
+    int no_of_rows, no_of_columns;
+    scanf("%d %d", &no_of_rows, &no_of_columns);
+
+    typedef vector <int> v_int;
+    vector <v_int> maximum_stones_in_path_ending_at(no_of_rows + 1, v_int(no_of_columns + 2, 0));
+
+    int maximum_stones_possible = 0;
+    for(int row = 1; row <= no_of_rows; row++)
+    {
+        for(int column = 1; column <= no_of_columns; column++)
+        {
+            int stones_i;
+            scanf("%d", &stones_i);
+
+            int maximum_till_here = max_3(maximum_stones_in_path_ending_at[row - 1][column], maximum_stones_in_path_ending_at[row - 1][column - 1],
+                                          maximum_stones_in_path_ending_at[row - 1][column + 1]);
+
+            maximum_stones_in_path_ending_at[row][column] = stones_i + maximum_till_here;
+
+            maximum_stones_possible = max(maximum_stones_possible, maximum_stones_in_path_ending_at[row][column]);
+        }
+    }
+
+    printf("%d\n", maximum_stones_possible);
+}
