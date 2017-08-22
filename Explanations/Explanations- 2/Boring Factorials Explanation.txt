@@ -1,0 +1,115 @@
+Sameer and Arpit want to overcome their fear of Maths and so they have been recently practicing Maths problems a lot.
+ Aman, their friend has been helping them out. But as it goes, Sameer and Arpit have got bored of problems involving factorials. 
+Reason being, the factorials are too easy to calculate in problems as they only require the residue modulo some prime and that is easy to calculate in linear time. 
+So to make things interesting for them, Aman - The Mathemagician, gives them an interesting task. He gives them a prime number P and an integer N close to P, 
+and asks them to find N! modulo P. He asks T such queries.
+
+------------------------------------------------------------------
+
+So the first observation is that if N >= P, N! = 0 (mod P) 
+
+Wilson's Theorem states that 
+
+(p - 1)! = -1 (mod p)
+=> (p - 2)! = -1. (p - 1)^(-1) (mod p)
+=> (p - 3)! = -1. (p - 1)^(-1). (p - 2)^(-1) (mod p)
+
+And so on, We keep doing this till we get n! ... The difference in between N and P is at most 1000, so we don't need to do more than 1000 iterations for any N.
+
+How do we find the inverse of an element modulo a number ?
+
+Fermat's Little Theorem comes to the rescue.
+
+a^(p - 1) = 1 (mod p)
+a^(-1). a^(p - 1) = a^(-1) (mod p)
+a^(p - 2) = a^(-1) (mod p)
+
+We can use binary exponentiation to evaluate this.
+
+-----------------------------------------
+
+Note, 
+
+1. Finding the inverse of every element using binary exponentiation also gives a TLE. 
+	To speeden it up, find the product = (p - 1). (p - 2). (p - 3) ... (n + 1)
+	
+	And then find the inverse of product using Fermat's Little Theorem. This way binary exponentiation is only called once.
+
+	Let us find the inverse of ab mod p.
+
+	x. (ab) = 1 (mod p)
+	x. a. b = 1 (mod p)
+	x. a. b. b^(-1) = b^(-1) (mod p)
+	x. a. a^(-1). 1 = b^(-1). a^(-1) (mod p)
+	x = b^(-1). a^(-1) (mod p)
+
+When dealing with the set of integers modulo a prime, multiplication is commutative. (In all rings in fact). 
+
+So, (ab)^(-1) = b^(-1). a^(-1).
+
+So, we can easily extend this to (abc ... n)^(-1) = n^(-1). ... c^(-1). b^(-1). a^(-1).
+
+We want to evaluate the RHS in our problem. We need not call the exponentiation routine every time. Find the product as a whole and THEN call it.
+
+2. I initially wrote wilson_theorem_factorial(n%p, p). This gives a TLE and WA. 
+Expected answer is 0. But, n%p will not give 0.
+
+For example, if n = 10^9 + 1000, p = 10^9 + 1
+Then, the wilson theorem function will go through 10^9 - 1000 = 10^9 iterations to find n!. This gives a TLE.
+
+---------------------------------------------------------------
+
+long long power_mod(int x, int power, int mod)
+{
+    long long result = 1, y = x;
+
+    while(power > 0)
+    {
+        if(power%2 == 1)
+            result = (result*y)%mod;
+
+        y = (y*y)%mod;
+        power = power >> 1;
+    }
+
+    return result;
+}
+
+long long inverse_by_fermat_theorem(int n, int prime)
+{
+    return power_mod(n, prime - 2, prime);//a^(p - 1) = 1 (mod p) => a^(p - 2) = a^(-1) (mod p)
+}
+
+long long wilson_theorem_factorial(int n, int prime)
+{
+    //(p - 1)! = -1 (mod p) => (p - 2)! = -1.(inverse(p-1)) (mod p), => (p - 3)! = -1. (p - 1)^(-1). (p - 2)^(-1) and so on till we reach n
+    long long factorial = prime - 1; //p - 1 = -1 (mod p)
+
+    if(n >= prime)
+    {
+        factorial = 0; //prime divides factorial
+        return factorial;
+    }
+
+    long long product = 1;
+    for(int i = prime - 1; i > n; i--)
+    {
+        product = (product*i)%prime;
+    }
+
+    factorial = (factorial*inverse_by_fermat_theorem(product, prime))%prime;
+
+    return factorial;
+}
+
+void solve()
+{
+    int n, prime;
+    scanf("%d %d", &n, &prime);
+
+    long long answer = 1;
+
+    answer = wilson_theorem_factorial(n, prime);
+
+    printf("%lld\n", answer);
+}
