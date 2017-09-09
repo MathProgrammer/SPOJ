@@ -4,7 +4,8 @@ int main()
 {
     const int ORIGIN_X = 25, ORIGIN_Y = 25, MAX_STEPS = 15, MAX_NEIGHBOURS = 6;
     int x_distance[MAX_NEIGHBOURS] = {-1, -1, 0, 1, 1, 0};
-    int y_distance[MAX_NEIGHBOURS] = {0, 1, 1, 0, -1, -1};
+    int y_distance[MAX_NEIGHBOURS] = {1, 0, -1, -1, 0, 1};
+
 
     long long no_of_homecoming_walks[MAX_STEPS][2*ORIGIN_X][2*ORIGIN_Y] = {0};
 
