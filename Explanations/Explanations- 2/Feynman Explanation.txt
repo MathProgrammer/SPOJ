@@ -1,0 +1,39 @@
+Richard Phillips Feynman was a well known American physicist and a recipient of the Nobel Prize in Physics. 
+He worked in theoretical physics and also pioneered the field of quantum computing. 
+He visited South America for ten months, giving lectures and enjoying life in the tropics. He is also known for his books "Surely You're Joking, Mr. Feynman!" and 
+"What Do You Care What Other People Think?", which include some of his adventures below the equator.
+
+His life-long addiction was solving and making puzzles, locks, and cyphers. Recently, an old farmer in South America, 
+who was a host to the young physicist in 1949, found some papers and notes that is believed to have belonged to Feynman. 
+Among notes about mesons and electromagnetism, there was a napkin where he wrote a simple puzzle: "how many different squares are there in a grid of N ×N squares?".
+
+In the same napkin there was a drawing which is reproduced below, showing that, for N=2, the answer is 5. 
+
+-----------------------------------------------------------------------------
+
+If we are making squares of size i, then the number of squares is given by
+
+(N - (i - 1))^2 ...
+
+If a square of size starts after i at either the row or the column, it will go beyond the size of the frame. 
+
+The range of summation is from i = 1 to N, 
+
+This is the sum of the first N squares which = N*(N + 1)*(2N + 1)/6
+
+-------------------------------------------------
+
+int main()
+{
+    while(true)
+    {
+        int no_of_squares;
+        scanf("%d", &no_of_squares);
+
+        if(no_of_squares == 0) break;
+
+        int answer = (no_of_squares*(no_of_squares + 1)*(2*no_of_squares + 1))/6;
+        printf("%d\n", answer);
+    }
+    return 0;
+}
