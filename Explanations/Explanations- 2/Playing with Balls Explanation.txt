@@ -1,0 +1,41 @@
+ There are W white balls and B black balls in a bag. A magician is performing tricks by drawing balls from the bag.
+
+    In each step, the magician randomly removes any two balls from the bag. If the drawn balls are of the same color, he will put one white ball in the bag, 
+otherwise he will put a black ball in it. 
+The two drawn balls from the bag from the ball are discarded.
+
+    He keeps on doing the above tricks until there is only one ball remaining in the bag.
+
+    Given W and B, you have to determine the probability that the color of last ball remaining in the bag is black. 
+You should print the answer with accuracy of upto 6 decimal digits.
+
+--------------------------------------------
+
+Here are the possible combinations - (WW) W
+				     (BB) W
+				     (WB) B
+
+Now, notice that the number of white balls reduces by exactly 1 each time it is drawn.
+Notice that the number of black balls is either the same or doesn't gets reduced by 2.
+
+In other words, the parity of the number of black balls is invariant. 
+
+If there were an odd number of black balls in the beginning, there will come a point when there will be 1 black ball in the box and some number of white balls.
+When there is 1 black ball left in the box, we can't ever get rid of it regardless of how many white balls are there in the box.
+Because the number of black balls will never change parity and will always be 0. 
+
+So, if there were an odd number of black balls in the beginning, the last ball is forced to be black.
+
+If there were an even number of black balls in the beginning, the last ball is forced to be white. (Since the number of black balls can't ever be odd(1) in this case ).
+
+-------------------------------------------------------------
+
+void solve()
+{
+    int white_balls, black_balls;
+    scanf("%d %d",&white_balls, &black_balls);
+
+    printf("%s\n", black_balls%2 == 1 ? "1.000000" : "0.000000");
+}
+
+
