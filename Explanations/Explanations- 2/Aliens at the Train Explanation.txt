@@ -1,0 +1,45 @@
+The aliens have arrived to Earth and everything is in harmony, the two races can live together. 
+However, one specific Female Alien does not want to see humans on her way to the university, the alien must use the train as every human does. 
+But she can choose any train station such she doesn’t see more than B humans, however, 
+the Alien wants to go as far as possible with the train. Please, help her in this task.
+
+------------------------------------------------
+
+Choose the maximum number of stops who's sum is <= B.
+
+In case there are multiple choices having the same number of stops, choose the one with the smaller number of people.
+
+-------------------------------------------------------------
+
+void solve()
+{
+    int no_of_stops, maximum_people_limit;
+    scanf("%d %d", &no_of_stops, &maximum_people_limit);
+
+    vector <int> no_of_people_at_stop(no_of_stops + 1);
+    for(int i = 1; i <= no_of_stops; i++)
+        scanf("%d", &no_of_people_at_stop[i]);
+
+    int maximum_stops = 0, maximum_people = 0, current_people = 0;
+    for(int left = 1, right = 1; right <= no_of_stops; right++)
+    {
+        current_people += no_of_people_at_stop[right];
+
+        while(current_people > maximum_people_limit)
+            current_people -= no_of_people_at_stop[left++];
+
+        int current_stops = right - (left - 1);
+
+        if(current_stops > maximum_stops)
+        {
+            maximum_stops = current_stops;
+            maximum_people = current_people;
+        }
+        else if(current_stops == maximum_stops)
+        {
+            maximum_people = min(maximum_people, current_people);
+        }
+    }
+
+    printf("%d %d\n",maximum_people, maximum_stops);
+}
