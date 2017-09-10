@@ -1,0 +1,56 @@
+There are N hotels along the beautiful Adriatic coast. Each hotel has its value in Euros.
+
+Sroljo has won M Euros on the lottery. Now he wants to buy a sequence of consecutive hotels, such that the sum of the values of these consecutive hotels 
+is as great as possible - but not greater than M.
+
+You are to calculate this greatest possible total value.
+
+------------------------------------------------------------
+
+The tag gave the problem away. 
+
+Sliding windows solve the problem.
+
+Note that this isn't a regular longest continuous sum problem because there's an upper bound over sums that we allow.
+
+There is an elegant way to maintain a window.
+
+l = r = 1, at first.
+
+In each iteration, current += A[r],
+
+while(current > M)
+{
+	current -= A[l]
+	l++
+}
+
+If at any point, the sum exceeds the budget, then keep changing the left pointer till it is within budget.
+
+--------------------------------------------------
+
+int main()
+{
+    int no_of_hotels, budget;
+    scanf("%d %d", &no_of_hotels, &budget);
+
+    vector <int> hotel_price(no_of_hotels + 1, 0);
+    for(int i = 1; i <= no_of_hotels; i++)
+        scanf("%d", &hotel_price[i]);
+
+    long long maximum_spending = 0, current_spending = 0;
+    for(int left = 1, right = 1; right <= no_of_hotels; right++)
+    {
+        current_spending += hotel_price[right];
+
+        while(current_spending > budget)
+        {
+            current_spending -= hotel_price[left++];
+        }
+
+        maximum_spending = max(maximum_spending, current_spending);
+    }
+
+    printf("%lld\n", maximum_spending);
+    return 0;
+}
