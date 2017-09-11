@@ -1,0 +1,54 @@
+Given integer n decide if it is possible to represent it as a sum of two squares of integers.
+
+Input
+First line of input contains one integer c <= 100 - number of test cases. Then c lines follow, each of them consisting of exactly one integer 0 <= n <= 10^12.
+
+-----------------------------------------------------
+
+Observation #1 - If a number = 3 (mod 4), it can never be written as the sum of two squares as 0 and 1 are the only quadratic residues of 4.
+
+Observation #2 - (a^2 + b^2).(c^2 + d^2) = (ac - bd)^2 + (ad + bc)^2
+
+So if we have two numbers that can be written as the sum of two squares, their product will also satisfy this property.
+
+Observation #3 - Apply this to the prime factorisation of any number. We can ignore 2, and all primes mod 1 in it's prime factorisation as it can be written like this.
+
+		If a number p occurs in n's factorisation, and p = 3 mod 4, then p has to occur to an even exponent. 
+		p^(2e) = (p^e)^2
+
+Otherwise it can't be written as the sum of two squares.
+
+Precompute the list of all primes up to a million. Get all prime factors of n, and check their exponent.
+ 
+------------------------------------------------------------
+
+void solve(vector <int> prime)
+{
+    long long n;
+    scanf("%lld", &n);
+
+    int two_squares = true;
+    for(int i = 0; prime[i]*1LL*prime[i] <= n; i++)
+    {
+        if(n%prime[i] == 0)
+        {
+            int exponent = 0;
+            while(n%prime[i] == 0)
+            {
+                n = n/prime[i];
+                exponent++;
+            }
+
+            if(prime[i]%4 == 3 && exponent%2 != 0)
+                two_squares = false;
+        }
+    }
+
+    if(n%4 == 3)
+        two_squares = false;
+
+    printf(two_squares ? "Yes\n" : "No\n");
+}
+
+
+
