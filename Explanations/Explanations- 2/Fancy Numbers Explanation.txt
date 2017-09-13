@@ -1,0 +1,50 @@
+Girls usually give only missed calls to their boyfriends and they want them to call back. These boys are now busy with their engineering subjects and cannot remember 
+all girl friends’ mobile number. Because of this, girls make it easy for them by having fancy mobile numbers. A fancy mobile number may contain many continuous digits in it.
+
+
+For example 9994442200 is a fancy mobile number because the boy can remember simply as triple nine, triple four, double two and double zero. 
+As they are engineering students they do think different. One of the engineering students can spell the above number as 
+double nine, nine, four, double four, two, two, double zero.
+
+The number 100 has only 2 possibilities as it can be spelt as either one, zero, zero (or) one, double zero
+
+Given a mobile number find the number of possibilities that the number can be remembered.
+
+-------------------------------------------
+
+Consider a run of n equal digits. The number of ways of paritioning them is equal to the number of ways of placing barriers in the n-1 spots.
+
+5 5 5 5 5 5
+
+5 | 5 5 5 | 5 5
+
+This is given by choose(n - 1, 0) + choose(n - 1, 1) + ... + choose(n - 1, n - 1) = 2^{n - 1}
+
+Calculate the number of partitions for each run of equal digits and multiply them together.
+
+------------------------------------------------------
+
+void solve()
+{
+    string number;
+    cin >> number;
+ 
+    int current_run = 1, no_of_fancy_numbers = 1;
+    for(unsigned int i = 1; i < number.size(); i++)
+    {
+        if(number[i] == number[i - 1])
+        {
+            current_run++;
+        }
+        else
+        {
+            no_of_fancy_numbers *= (1 << (current_run - 1));
+            current_run = 1;
+        }
+    }
+
+    no_of_fancy_numbers *= (1 << (current_run - 1));
+ 
+    printf("%d\n", no_of_fancy_numbers);
+}
+
