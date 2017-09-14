@@ -1,0 +1,66 @@
+Alim and sufian are two good friends. They loves to playing game with number recently they discover a new game name “Tip Top”. 
+The rule of the game is they took a number (N) randomly after that they find the all divisors of N. Then they starting to play the game first alim took a divisor, 
+then sufian so on. The person who took the last divisor will win the game.
+
+Every time the game started with alim . Now alim wants to know when he will win.
+
+As you a good programmer your task is to find will alim win or not.
+
+------------------------------------------------
+
+Clearly the answer only depends on the parity of the number of divisors. n can go up to 1e18. So factorising in square root time will not work.
+
+Fortunately, there's a faster solution. What numbers have an odd number of divisors ? Perfect squares.
+
+So, given a number n, check if it's a perfect square.
+
+Now, avoid the sqrt function as it causes precision loss. You have to check if there exists an integer a, such that a*a == n
+
+Now a is at most 1e9. O(n) is not possible. 
+
+The very interesting way to do this is binary search. 
+
+High = 1e9, low = 1, 
+
+Do binary search and check if mid^2 = , < or > n and change the end points accordingly. This way we can determine if  any number up to 1e9 is a perfect square in at most
+32 operations. O(log root(n)) complexity for each test case.
+
+------------------------------------------------------
+
+int is_square(long long n)
+{
+    long long low = 1, high = 1e9;
+    long long mid;
+
+    while(low <= high)
+    {
+        mid = (low + high)/2;
+
+        if(mid*mid == n)
+            break;
+        else if(mid*mid < n)
+            low = mid + 1;
+        else if(mid*mid > n)
+            high = mid - 1;
+    }
+
+    return (mid*mid == n);
+}
+
+int main()
+{
+    int no_of_test_cases;
+    scanf("%d", &no_of_test_cases);
+
+    for(int i = 1; i <= no_of_test_cases; i++)
+    {
+        long long n;
+        scanf("%lld", &n);
+
+        printf("Case %d: %s\n", i, is_square(n) ? "Yes" : "No");
+    }
+
+    return 0;
+}
+
+
