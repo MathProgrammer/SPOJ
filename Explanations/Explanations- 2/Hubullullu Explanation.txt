@@ -1,0 +1,40 @@
+After duelling in quake (a multiplayer game), Airborne and Pagfloyd decide do test themselves out in another game called Hubulullu. The rules of the game are as follows:
+
+N wooden pieces (marked with numbers 1 to N) are placed in a transparent bottle. On his turn the first player takes out some piece (numbered x) 
+and all the pieces numbered by divisors of x that are present in the transparent bottle. The second player picks another number and removes it and its divisors as well. 
+Play continues in an alternating fashion until all pieces have been removed from the bottle. The player who removes the last piece from the bottle wins the game.
+
+Both players play optimally. Given N (the number of wooden pieces in the transparent bottle initially) and the name of the player who starts the game, determine the winner.
+
+For each N, it's possible to determine a winner if both players play optimally.
+---------------------------------------------
+
+The proof is quite difficult but wonderful.
+
+Let's assume the second player has a winning strategy. That means the second player has a reply to any move that the first player makes.
+Let's say the first player takes out 1 and the second player takes out b.
+
+The configuration after b would have to be losing configuration.
+However, the first player can start by taking out b and give the losing configuration to the second player.
+
+This contradicts the assumption that the second player always has a winning strategy.
+If any player has a winning strategy, it has to be the first player.
+
+This is an existence proof without finding the strategy. However, the problem statement guarantees that it is always possible to find out a winning strategy.
+-------------------------------------------------------
+
+int main()
+{
+    int no_of_test_cases;
+    scanf("%d", &no_of_test_cases);
+
+    while(no_of_test_cases--)
+    {
+        int n, first_player;
+        scanf("%d %d", &n, &first_player);
+
+        printf(first_player == 0 ? "Airborne wins.\n" : "Pagfloyd wins.\n");
+    }
+
+    return 0;
+}
