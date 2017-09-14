@@ -1,0 +1,102 @@
+iven the value of N, you will have to find the value of H. The meaning of H is given in the following code:
+
+H=0;
+For (i=1; i<=n; i++) {
+    For (j=1; j<=n; j++) {
+        H = H + totient(i) * totient(j);
+    }
+}
+
+------------------------------------------------------------
+
+Observation #1 - The quantity H can also be described as [totient[1] + totient[2] + totient[3] + ... + totient[n]] x [totient[1] + totient[2] + ... + totient[n]]p^n
+		Instead of using an O(n^2) algorithm to find H. Use an O(n) algorithm to find prefix sum till n. 
+		And then print f(n)*f(n) 
+
+Observation #2 - To get the totient(n), use a sieve and keep track of every number's largest prime factor.
+
+	Totient is a multiplicative function. phi(n) = phi(p^a q^b ... t^n) = phi(p^a)phi(q^b) .... phi(t^n)) 
+
+	phi(p^a) = p^a - p^(a - 1)
+
+	Do a sieve. 
+
+1. If you encounter a prime, phi(p) = p - 1.
+	Mark the largest prime factor of all multiples of p as p.
+
+2. If you encounter a number that's not a prime, then find the exponent of it's largest prime factor.
+
+	Let it be p^a.
+
+	Then phi(n) = (p^a - p^(a - 1)). phi(n')
+
+	where n = p^a . n'
+
+	As we are doing a sieve, we have already computed phi(n'). We need not break down n into all it's prime factors. Finding the largest one is sufficient.
+
+------------------------------------------------
+
+void precompute(vector <int> &totient, int LIMIT)
+{
+    vector <int> largest_prime_factor_of(LIMIT + 1, 0);
+
+    totient[1] = 1;
+    for(int i = 2; i <= LIMIT; i++)
+    {
+        if(largest_prime_factor_of[i] == 0)
+        {
+            totient[i] = i - 1;
+
+            for(int j = 2*i; j <= LIMIT; j += i)
+                largest_prime_factor_of[j] = i;
+        }
+        else
+        {
+            int reduced_i = i;
+            int p = largest_prime_factor_of[i];
+            int p_power_n = 1;
+
+            while(reduced_i%p == 0)
+            {
+                reduced_i /= p;
+                p_power_n *= p;
+            }
+
+            int p_power_n_minus_1 = p_power_n/p;
+
+            totient[i] = (p_power_n - p_power_n_minus_1)*totient[reduced_i];
+        }
+    }
+}
+
+void compute(vector <long long>&totient_sum_till, vector <int> &totient, int LIMIT)
+{
+    for(int i = 1; i <= LIMIT; i++)
+        totient_sum_till[i] = totient_sum_till[i - 1] + totient[i];
+}
+
+---------------------------------------------
+
+int main()
+{
+    const int LIMIT = 1e4;
+    vector <int> totient(LIMIT + 1);
+
+    precompute(totient, LIMIT);
+
+    vector <long long> totient_sum_till(LIMIT + 1, 0);
+    compute(totient_sum_till, totient, LIMIT);
+
+    int no_of_test_cases;
+    scanf("%d", &no_of_test_cases);
+
+    while(no_of_test_cases--)
+    {
+        int n;
+        scanf("%d", &n);
+
+        printf("%lld\n", totient_sum_till[n]*totient_sum_till[n]);
+    }
+
+    return 0;
+}
