@@ -1,0 +1,19 @@
+
+
+---------------------------------------------
+
+Alright so if there are n levels, there will T(n) triangles, where T(n) is the n-th triangular number.
+The number of sticks = 3T(n)
+
+-----------------------------
+
+void solve()
+{
+    int no_of_levels;
+    scanf("%d", &no_of_levels);
+
+    int no_of_triangles = (no_of_levels*(no_of_levels + 1))/2;
+    int no_of_sticks = 3*no_of_triangles;
+
+    printf("%d\n", no_of_sticks);
+}
