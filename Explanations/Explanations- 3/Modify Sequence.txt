@@ -1,0 +1,47 @@
+Suppose we have a sequence of non-negative integers, Namely a1, a2, ..., an. At each time we can choose one term ai with 0 < i < n and we subtract 1 from both ai and ai+1. 
+We wonder whether we can get a sequence of all zeros after several operations.
+
+-----------------------------------------------
+
+It's actually simpler than it appears. I was looking for an invariant, but that's unnecessary. Simulate the process.
+
+For all elements to be 0, the first element must be 0. To make A[1] = 0, we must subtract A[1] and A[2] by 0.
+Then, if A[2] < 0, we can't complete the process. 
+
+Else, Subtract what is left of A[2] from both A[2] and A[3]. We proceed like this for every element of the array.
+
+At last the difference must be A[n]. If at any point, a number becomes negative, then it means that we can't get a sequence of all 0s.
+
+I missed a corner case in this one. The case where n = 1, is special.
+
+--------------------------------------------
+
+void solve()
+{
+    int no_of_elements;
+    scanf("%d", &no_of_elements);
+
+    vector <int> element(no_of_elements + 1, 0);
+    for(int i = 1; i <= no_of_elements; i++)
+        scanf("%d", &element[i]);
+
+    int possible_to_equalise = true;
+    int difference = element[1];
+    for(int i = 2; i < no_of_elements; i++)
+    {
+        element[i] -= difference;
+
+        if(element[i] < 0)
+        {
+            possible_to_equalise = false;
+            break;
+        }
+
+        difference = element[i];
+    }
+
+    if(difference != element[no_of_elements] || no_of_elements == 1)
+        possible_to_equalise = false;
+
+    printf(possible_to_equalise ? "YES\n" : "NO\n");
+}
