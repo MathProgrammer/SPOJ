@@ -1,0 +1,47 @@
+There is a wall in your backyard. It is so long that you can’t see its endpoints. 
+You want to build a fence of length L such that the area enclosed between the wall and the fence is maximized. 
+The fence can be of arbitrary shape, but only its two endpoints may touch the wall.
+
+----------------------------------------------
+
+Okay, if there is a figure that has a maximum area with a certain perimeter,
+
+1. It must be convex, or we can reflect about a line crossing the boundary and get a greater area.
+2. It must be symmetric or else, we can simply reflect the greater half and geta  greater area with the same circumference.
+
+This is repeating Steiner's argument for the isoperimetric theorem (not completely rigorous).
+
+Basically, the curve which maximises area with a fixed perimeter is a circle.
+
+in this question, we must have two endpoints of this curve on a straight line. Therefore, the best answer is a semi-circle.
+
+C = PI r, is given.
+
+Area = half( PI. r^2 ) = half(PI (C/PI) )^2 = C^2/2PI
+
+Make Circumference a double to avoid floating point precision loss.
+
+--------------------------------------------------------------
+
+void semi_circle_area(double circumference)
+{
+    const double PI = 3.1415926;
+
+    double area = (circumference*circumference)/(2*PI);
+    printf("%.2lf\n", area);
+}
+
+int main()
+{
+    while(true)
+    {
+        double circumference;
+        scanf("%lf", &circumference);
+
+        if(circumference == 0) break;
+
+        semi_circle_area(circumference);
+    }
+
+    return 0;
+} 
