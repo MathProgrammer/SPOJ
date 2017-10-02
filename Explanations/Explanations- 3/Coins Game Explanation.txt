@@ -1,0 +1,56 @@
+Asen and Boyan are playing the following game. They choose two different positive integers K and L, and start the game with a tower of N coins. 
+Asen always plays first, Boyan – second, after that – Asen again, then Boyan, and so on. The boy in turn can take 1, K or L coins from the tower. 
+The winner is the boy, who takes the last coin (or coins). After a long, long playing, Asen realizes that there are cases in which he could win, no matter how Boyan plays. 
+And in all other cases Boyan being careful can win, no matter how Asen plays.
+
+So, before the start of the game Asen is eager to know what game case they have. Write a program coins which help Asen to predict the game result for given K, L and N.
+------------------------------------------
+
+Precompute the winners for all games and then answer each query in O(1) time.
+
+The player who cannot move on his turn loses. The winner is the player who has not lost.
+
+Winner(0) = 2
+
+After the first player makes a move from i coins to i' coins, he is the second player in a game of i' coins.
+
+If Winner(i - 1) or Winner(i - k) or Winner(i - l) is winning for the second player, the first player wins.
+If they're all winning for the first player, the second player wins.
+
+--------------------------------------------------------------
+
+void precompute(vector <int> &winner, int MAX_GAMES, int k, int l)
+{
+    winner[0] = 2;
+
+    for(int i = 1; i < MAX_GAMES; i++)
+    {
+        if(winner[i - 1] == 2 || (legal_move(i - k) && winner[i - k] == 2)  || (legal_move(i - l) && winner[i - l] == 2))
+        {
+            winner[i] = 1;
+        }
+        else
+        {
+            winner[i] = 2;
+        }
+    }
+}
+
+int main()
+{
+    const int MAX_GAMES = 1e6 + 1;
+    vector <int> winner(MAX_GAMES);
+    int no_of_games, k, l;
+    scanf("%d %d %d", &k, &l, &no_of_games);
+
+    precompute(winner, MAX_GAMES, k, l);
+
+    while(no_of_games--)
+    {
+        int no_of_coins;
+        scanf("%d", &no_of_coins);
+        printf("%c", winner[no_of_coins] == 1 ? 'A' : 'B');
+    }
+
+    return 0;
+}
