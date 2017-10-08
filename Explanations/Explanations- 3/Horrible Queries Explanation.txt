@@ -1,0 +1,117 @@
+World is getting more evil and it's getting tougher to get into the Evil League of Evil. 
+Since the legendary Bad Horse has retired, now you have to correctly answer the evil questions of Dr. Horrible, who has a PhD in horribleness (but not in Computer Science). 
+You are given an array of N elements, which are initially all 0. After that you will be given C commands. They are -
+
+* 0 p q v - you have to add v to all numbers in the range of p to q (inclusive), where p and q are two indexes of the array.
+
+* 1 p q - output a line containing a single integer which is the sum of all the array elements between p and q (inclusive)
+
+-----------------------------------------------
+
+The interesting thing about this problem is that the element array is not necessary at all. 
+Lazy propagation.
+
+void propagate(int node, int start, int end)
+{
+    LL no_of_elements = end - (start - 1);
+    tree[node] += lazy[node]*no_of_elements;
+
+    if(start != end)
+    {
+        lazy[2*node] += lazy[node];
+        lazy[2*node + 1] += lazy[node];
+    }
+
+    lazy[node] = 0;
+}
+
+void update(int node, int start, int end, int query_start, int query_end, int value)
+{
+    if(lazy[node])
+        propagate(node, start, end);
+
+    if(query_start > end || query_end < start)
+        return;
+
+    if(query_start <= start && end <= query_end)
+    {
+        LL no_of_elements = end - (start - 1);
+        tree[node] += no_of_elements*value;
+
+        if(start != end)
+        {
+            lazy[2*node] += value;
+            lazy[2*node + 1] += value;
+        }
+
+        return;
+    }
+
+    int mid = (start + end)/2;
+
+    update(2*node, start, mid, query_start, query_end, value);
+    update(2*node + 1, mid + 1, end, query_start, query_end, value);
+
+    tree[node] = tree[2*node] + tree[2*node + 1];
+}
+
+If a certain interval gets incremented completely, then T(n) increases by n*v where n is the number of elements in that interval.
+Laziness of T's children increases by v.
+
+Don't forget to return in the update function after updating the interval that falls completely within the range.
+
+While propagating laziness, T's children's laziness increases by lazy[T].
+
+------------------------------------------------------------------------------------
+
+LL query(int node, int start, int end, int query_start, int query_end)
+{
+    if(lazy[node])
+        propagate(node, start, end);
+
+    if(query_start > end || query_end < start)
+        return 0;
+
+    if(query_start <= start && end <= query_end)
+        return tree[node];
+
+    int mid = (start + end) >> 1;
+
+    LL left_answer = query(2*node, start, mid, query_start, query_end);
+    LL right_answer = query(2*node + 1, mid + 1, end, query_start, query_end);
+
+    return (left_answer + right_answer);
+}
+
+Find the query answer to every left and right subtree.
+
+------------------------------------------------------------------------------------------
+
+void solve()
+{
+    memset(tree, 0, sizeof(tree));
+    memset(lazy, 0, sizeof(lazy));
+
+    int no_of_elements, no_of_queries;
+    scanf("%d %d", &no_of_elements, &no_of_queries);
+
+    while(no_of_queries--)
+    {
+        int type, left, right;
+        scanf("%d %d %d", &type, &left, &right);
+
+        if(type == 0)
+        {
+            int value;
+            scanf("%d", &value);
+            update(1, 1, no_of_elements, left, right, value);
+        }
+        else if(type == 1)
+        {
+            LL answer = query(1, 1, no_of_elements, left, right);
+            printf("%lld\n", answer);
+        }
+    }
+}
+
+Remember to set tree and lazy tree to 0 every time !
