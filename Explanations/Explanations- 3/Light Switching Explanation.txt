@@ -1,0 +1,106 @@
+
+
+----------------------------------------------------------
+
+Keep track of the number of lights on in the current interval. Use lazy propagation.
+
+void build(int node, int start, int end)
+{
+    if(start == end)
+    {
+        tree[node] = light[start];
+        return;
+    }
+
+    int mid = (start + end)/2;
+    build(2*node, start, mid);
+    build(2*node + 1, mid + 1, end);
+
+    tree[node] = tree[2*node] + tree[2*node + 1];
+}
+
+T(n) = T(2n) + T(2n + 1)
+
+---------------------------------------------------------------
+
+void propagate(int node, int start, int end)
+{
+    int on_lights = tree[node];
+    int total_lights = end - (start - 1);
+    int off_lights = total_lights - on_lights;
+
+    if(lazy[node]%2 == 1)
+        tree[node] = off_lights;
+
+    if(start != end)
+    {
+        lazy[2*node] += lazy[node];
+        lazy[2*node + 1] += lazy[node];
+    }
+
+    lazy[node] = 0;
+}
+
+If the number of pending operations is odd, then flip all the switches.
+
+-------------------------------------------------------------------------------------
+
+void update(int node, int start, int end, int query_start, int query_end)
+{
+    if(lazy[node] != 0)
+        propagate(node, start, end);
+
+    if(query_start > end || query_end < start)
+        return;
+
+    if(query_start <= start && end <= query_end)
+    {
+        int no_of_lights = end - (start - 1);
+        int no_of_on_lights = tree[node];
+        int no_of_off_lights = no_of_lights - no_of_on_lights;
+
+        tree[node] = no_of_off_lights;
+
+        if(start != end)
+        {
+            lazy[2*node]++;
+            lazy[2*node + 1]++;
+        }
+        return;
+    }
+
+    int mid = (start + end)/2;
+
+    update(2*node, start, mid, query_start, query_end);
+    update(2*node + 1, mid + 1, end, query_start, query_end);
+
+    tree[node] = tree[2*node] + tree[2*node + 1];
+}
+
+Make sure to write T(n) = T(2n) + T(2n + 1) at the end. It's important for the changes to go upward as well
+Intervals that fit completely inside or outside the interval we are interested in don't need that recurrence relation at the end. 
+We only need to do lazy propagation till there.
+
+-----------------------------------------------------------------------------------------
+
+int query(int node, int start, int end, int query_start, int query_end)
+{
+    if(lazy[node] != 0)
+        propagate(node, start, end);
+
+    if(query_start > end || query_end < start)
+        return 0;
+
+    if(query_start <= start && end <= query_end)
+        return tree[node];
+
+    int mid = (start + end)/2;
+
+    int left_answer  = query(2*node, start, mid, query_start, query_end);
+    int right_answer = query(2*node + 1, mid + 1, end, query_start, query_end);
+
+    return (left_answer + right_answer);
+}
+
+Make sure the laziness is propagated before querying.
+
