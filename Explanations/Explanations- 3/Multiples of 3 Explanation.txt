@@ -1,0 +1,118 @@
+There are N numbers a[0],a[1]..a[N - 1]. Initally all are 0. You have to perform two types of operations :
+
+1) Increase the numbers between indices A and B (inclusive) by 1. This is represented by the command "0 A B"
+2) Answer how many numbers between indices A and B (inclusive) are divisible by 3. This is represented by the command "1 A B".
+
+--------------------------------------------
+
+Since there are many range updates, it's clear lazy propagation must be used. 
+
+What happens in one operation. All n = m (mod 3), will become m + 1 (mod 3). 
+
+Keep track of all the remainders mod 3 in every range.
+
+-------------------------------------------------------------
+
+void build(int node, int start, int end)
+{
+    if(start == end)
+    {
+        int mod = element[start]%3;
+        int mod_2 = (mod + 1)%3, mod_3 = (mod + 2)%3;
+
+        tree[node][mod] = 1;
+        tree[node][mod_2] = tree[node][mod_3] = 0;
+
+        return;
+    }
+
+    int mid = (start + end)/2;
+
+    build(2*node, start, mid);
+    build(2*node + 1, mid + 1, end);
+
+    for(int m = 0; m < 3; m++)
+        tree[node][m] = tree[2*node][m] + tree[2*node + 1][m];
+}
+
+----------------------------------------------------------------------
+
+We only need to know the number of operations mod 3. Make it 0 after it has been propagated.
+
+void propagate(int node, int start, int end)
+{
+    int no_of_additions = lazy[node]%3;
+
+    if(no_of_additions == 1)
+    {
+        swap(tree[node][0], tree[node][1], tree[node][2]);
+    }
+    else if(no_of_additions == 2)
+    {
+        swap(tree[node][0], tree[node][2], tree[node][1]);
+    }
+
+    if(start != end)
+    {
+        lazy[2*node] = (lazy[2*node] + lazy[node])%3;
+        lazy[2*node + 1] = (lazy[2*node + 1] + lazy[node])%3;
+    }
+    lazy[node] = 0;
+}
+
+--------------------------------------------------------------------------------------
+
+For updating, first propagate the pending operations and then perform current operation.
+
+void update(int node, int start, int end, int query_start, int query_end)
+{
+    if(lazy[node])
+        propagate(node, start, end);
+
+    if(query_start > end || query_end < start)
+        return;
+
+    if(query_start <= start && end <= query_end)
+    {
+        swap(tree[node][0], tree[node][1], tree[node][2]);
+
+        if(start != end)
+        {
+            lazy[2*node]++;
+            lazy[2*node] %= 3;
+
+            lazy[2*node + 1]++;
+            lazy[2*node + 1] %= 3;
+        }
+        return;
+    }
+
+    int mid = (start + end)/2;
+
+    update(2*node, start, mid, query_start, query_end);
+    update(2*node + 1, mid + 1, end, query_start, query_end);
+
+    for(int m = 0; m < 3; m++)
+        tree[node][m] = tree[2*node][m] + tree[2*node + 1][m];
+}
+
+---------------------------------------------------------------------------
+
+int query(int node, int start, int end, int query_start, int query_end)
+{
+    if(lazy[node])
+        propagate(node, start, end);
+
+    if(query_start > end || query_end < start)
+        return 0;
+
+    if(query_start <= start && end <= query_end)
+        return tree[node][0];
+
+    int mid = (start + end)/2;
+
+    int left_answer  = query(2*node, start, mid, query_start, query_end);
+    int right_answer = query(2*node + 1, mid + 1, end, query_start, query_end);
+
+    return (left_answer + right_answer);
+}
