@@ -1,0 +1,116 @@
+
+------------------------------------------------
+
+The following information needs to be associated with every node - 
+
+Maximum, 
+Maximum two-sum.
+
+For convenience, Max two-sum(leaf) = leaf.
+
+------------------------------------------------------
+
+Here's how it's built.
+
+max(n) = max{ max(2n), max(2n + 1) }
+max sum(n) = max{ max sum(2n), max sum(2n + 1), max(2n), max(2n + 1) }
+
+void build(int node, int start, int end)
+{
+    if(start == end)
+    {
+        max_tree[node] = max_sum_tree[node] = element[start];
+        return;
+    }
+
+    int mid = (start + end)/2;
+
+    build(2*node, start, mid);
+    build(2*node + 1, mid + 1, end);
+
+    max_tree[node] = max(max_tree[2*node], max_tree[2*node + 1]);
+    max_sum_tree[node] = max_3(max_sum_tree[2*node], max_sum_tree[2*node + 1], max_tree[2*node] + max_tree[2*node + 1]);
+}
+
+---------------------------------------
+
+Now to run an update, just find your way to that node, and then update each parent of that node according to the above given relationships.
+
+void update(int node, int start, int end, int index, int value)
+{
+    if(start == end)
+    {
+        max_sum_tree[node] = max_tree[node] = element[index] = value;
+        return;
+    }
+
+    int mid = (start + end)/2;
+
+    if(start <= index && index <= mid)
+    {
+        update(2*node, start, mid, index, value);
+    }
+    else if(mid <= index && index <= end)
+    {
+        update(2*node + 1, mid + 1, end, index, value);
+    }
+
+    max_tree[node] = max(max_tree[2*node], max_tree[2*node + 1]);
+    max_sum_tree[node] = max_3(max_sum_tree[2*node], max_sum_tree[2*node + 1], max_tree[2*node] + max_tree[2*node + 1]);
+}
+
+---------------------------------------------------------------------------------
+
+Now, for a query, we need two functions. One to query max sum, one to query max.
+
+For each node that we visit, check if it lies completely inside the interval, or completely outside. 
+
+If a node is completely inside the interval return max sum (node), since that is already compute.
+
+If a node is partially in the interval - 
+
+1. Divide into left and right.
+2. query max(left), max(right), max sum(left) max sum(right)
+3. return max_3{ max(left) + max(right), max sum(left), max sum(right)}
+
+Now, for querying max, again check if the node is completely in the interval and return max (node), as it is already computed.
+Otherwise, go left and right and return max{ max left, max right}
+
+----------------------------------------------------------------------------------
+
+int query_max(int node, int start, int end, int query_start, int query_end)
+{
+    if(query_start > end || query_end < start)
+        return 0;
+
+    if(query_start <= start && end <= query_end)
+    {
+        return max_tree[node];
+    }
+
+    int mid = (start + end)/2;
+
+    int left_max  = query_max(2*node, start, mid, query_start, query_end);
+    int right_max = query_max(2*node + 1, mid + 1, end, query_start, query_end);
+
+    return max(left_max, right_max);
+}
+
+int query(int node, int start, int end, int query_start, int query_end)
+{
+    if(query_start > end || query_end < start)
+        return 0;
+
+    if(query_start <= start && end <= query_end)
+        return max_sum_tree[node];
+
+    int mid = (start + end)/2;
+
+    int left_max = query_max(2*node, start, mid, query_start, query_end);
+    int right_max = query_max(2*node + 1, mid + 1, end, query_start, query_end);
+
+    int left_answer =  query(2*node, start, mid, query_start, query_end);
+    int right_answer = query(2*node + 1, mid + 1, end, query_start, query_end);
+
+    return max_3(left_answer, right_answer, left_max + right_max);
+}
