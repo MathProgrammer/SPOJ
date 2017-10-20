@@ -1,0 +1,71 @@
+
+-------------------------------------
+
+First, let's solve the problem for 1 pile. After that take the nim-sum of all the piles' grundy numbers.
+
+From n stones, we can go to (n - fibo[i]), if fibo[i] <= n.
+
+So, grundy(n) = mex{grundy(n - fibo[n])}
+
+There are only 35 fibonacci numbers in the given range ... So, we can perform the operations in time.
+
+----------------------------------------------------------------------
+
+int get_mex(set <int> &state_possible)
+{
+    int i = 0;
+
+    while(true)
+    {
+        if(state_possible.count(i) == 0)
+            return i;
+
+        i++;
+    }
+}
+
+void compute(vector <int> &grundy, vector <int> &fibonacci, int MAX_STONES)
+{
+    grundy[0] = 0;
+
+    for(int i = 1; i <= MAX_STONES; i++)
+    {
+        set <int> state_possible;
+
+        for(int j = 0; fibonacci[j] <= i; j++)
+        {
+            state_possible.insert(grundy[i - fibonacci[j]]);
+        }
+
+        grundy[i] = get_mex(state_possible);
+    }
+}
+
+int main()
+{
+    vector <int> fibonacci(35);
+    fibonacci[0] = fibonacci[1] = 1;
+    for(int i = 2; i < 35; i++)
+    {
+        fibonacci[i] = fibonacci[i - 1] + fibonacci[i - 2];
+    }
+
+    const int MAX_STONES = 3e6;
+    vector <int> grundy(MAX_STONES);
+    compute(grundy, fibonacci, MAX_STONES);
+
+    int no_of_piles;
+    scanf("%d", &no_of_piles);
+
+    int nim_sum = 0;
+    while(no_of_piles--)
+    {
+        int stones;
+        scanf("%d", &stones);
+
+        nim_sum ^= grundy[stones];
+    }
+
+    printf(nim_sum == 0 ? "Vinit\n" : "Ada\n");
+    return 0;
+}
