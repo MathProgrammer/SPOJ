@@ -1,0 +1,79 @@
+This is a DP question with bitmasks.
+
+Let's say there are only 5 people. 
+We will have a binary string where the i-th bit = 1, if the i-th subject has been allocated, and 0 if it hasn't.
+
+Now, let's say we have found the number of assignments for 4 people. 
+
+5th person' subjects are - 1 0 0 1 0
+
+Then, f(5, 11111) = f(4, 01111) + f(4, 11101)
+
+That is, the options are, we must allocate 4 subjects to the first 4 people in either - 01111 or 11101.
+
+This takes us to our recurrence.
+
+f(i, mask) represents the number of assignments to the first i students where the i-th subject is allocated if it is set in the mask.
+
+f(0, 0) = 1
+
+f(i + 1, mask) = f(i - 1, mask with j-th bit unset)  = f(i, XOR(mask, 2^(j - 1))), where j is a subject that student i likes. and mask has exactly i bits set.
+
+Psuedo-code
+
+for i = 1... .n
+	for mask 1 ... 2^n - 1
+		if(mask has i bits set)
+			for(j = 1 ... n)
+				if(student i likes subject j, then)
+					f(i, mask) += f(i - 1, mask without j-th bit set).
+
+For convenience, f(0, 0) = 1
+
+f(N, 11 .... 1) is the answer = f(N, 2^N - 1)
+
+------------------------------------------------------------------
+
+int bit_set(int mask, int position)
+{
+    position--;
+    return (mask & (1 << position) );
+}
+
+int one_bit_unset(int mask, int position)
+{
+    position--;
+    return (mask^(1 << position) );
+}
+
+void solve()
+{
+    int no_of_students;
+    scanf("%d", &no_of_students);
+
+    int likes[no_of_students + 1][no_of_students + 1];
+    for(int i = 1; i <= no_of_students; i++)
+        for(int j = 1; j <= no_of_students; j++)
+            scanf("%d", &likes[i][j]);
+
+    memset(no_of_assignments, 0, sizeof(no_of_assignments));
+    no_of_assignments[0][0] = 1;
+
+    for(int i = 1; i <= no_of_students; i++)
+    {
+        for(int mask = 1; mask < (1 << no_of_students); mask++)
+        {
+            if(population_count[mask] == i)
+            {
+                for(int j = 1; j <= no_of_students; j++)
+                {
+                    if(bit_set(mask, j) && likes[i][j])
+                        no_of_assignments[i][mask] += no_of_assignments[i - 1][one_bit_unset(mask, j)];
+                }
+            }
+        }
+    }
+
+    printf("%lld\n", no_of_assignments[no_of_students][(1 << no_of_students) - 1]);
+}
+
