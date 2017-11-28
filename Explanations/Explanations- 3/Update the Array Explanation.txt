@@ -1,0 +1,52 @@
+
+Alright, I see the question and the first thing that comes into my mind is lazy propagation !
+
+However, I saw the comments and people said that there's a simpler solution. 
+
+And then I made an observation.
+
+Have an array - 
+
+No of Updates Starting Here -- U
+
+For every update, U[l]++, U[r + 1]--;
+
+To construct the final array,
+
+A[i] = A[i - 1] + U[i]
+
+If 10 new updates start at position i, then all of them will be added to A[i], in addition to propagating the updates that affected A[i - 1].
+Of course, if an update ends, then it will neutralise each other.
+
+---------------------------------------------------
+
+void solve()
+{
+	int no_of_elements, no_of_updates;
+	scanf("%d %d", &no_of_elements, &no_of_updates);
+
+	vector <int> updates_starting_here(no_of_elements + 2, 0);
+	while(no_of_updates--)
+	{
+		int left, right, value;
+		scanf("%d %d %d", &left, &right, &value);
+
+		updates_starting_here[left + 1] += value;
+		updates_starting_here[right + 2]-= value;
+	}
+
+	vector <int> element(no_of_elements + 1, 0);
+	for(int i = 1; i <= no_of_elements; i++)
+		element[i] = element[i - 1] + updates_starting_here[i];
+
+	int no_of_queries;
+	scanf("%d", &no_of_queries);
+
+	while(no_of_queries--)
+	{
+		int i;
+		scanf("%d", &i);
+
+		printf("%d\n", element[i + 1]);
+	}
+}
