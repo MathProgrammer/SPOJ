@@ -1,0 +1,80 @@
+
+If the question was asking to display the number of people in every second, 
+
+then one possible approach would be to maintain an array P, where P[i] holds the number of people at time i.
+
+Now, for each person, you could increment P[entry] .... P[exit] by one.
+
+This is O(|entry - exit| N)
+
+One way to optimise this is to write New People[entry]++, New People[exit]--
+
+And then P[i] = P[i - 1] + New People[i]
+
+This is O(|entry - exit| + N).
+
+While this is a very cool trick for range queries, |entry - exit| is simply too big here (1e7)
+
+Now, I tried this and went through every second to see which i maximised P[i].
+
+However, this will cause a TLE, needless to say.
+
+Instead, what should be done is keep track of the IDENTITY of each time - whether it is an entry or an exit.
+Sort all entries by time.
+
+If the identity is an entry, increment the no of people. Else decrement it.
+
+This is O(N log N + N) 
+
+N log N for sorting + N for the people.
+
+This never takes too much time because the N log N <<< |entry - exit|. In fact, in this approach even if |entry - exit| = 1e18, nothing would change, 
+it would still run as fast.
+
+Whenever an entry is logged, increment the counter.
+When an exit is logged, decrement the counter.
+
+This only depends on the number of logs and not the size of the interval.
+
+-----------------------------------------------------
+
+struct log{
+	int time, type;
+};
+
+int compare(const log &A, const log &B)
+{
+	return (A.time <= B.time);
+}
+
+void solve()
+{
+	const int ENTRY = 0, EXIT = 1;
+
+	int no_of_people;
+	scanf("%d", &no_of_people);
+
+	vector <log> event(2*no_of_people);
+
+	for(int i = 0; i < no_of_people; i++)
+	{
+		scanf("%d %d", &event[2*i].time, &event[2*i + 1].time);
+
+		event[2*i].type = ENTRY;
+		event[2*i + 1].type = EXIT;
+	}
+
+	sort(all(event), compare);
+
+	int no_of_inside_people = 0;
+	int max_people = 0;
+
+	for(int i = 0; i < event.size(); i++)
+	{
+		no_of_inside_people += (event[i].type == ENTRY ? 1 : -1);
+		max_people = max(no_of_inside_people, max_people);
+	}
+
+	printf("%d\n", max_people);
+}
+
