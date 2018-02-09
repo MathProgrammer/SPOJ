@@ -1,0 +1,48 @@
+
+First of all, there's always a multiple of every number that contains only 1s and 0s. 
+
+https://www.quora.com/What-is-the-lowest-multiple-of-72-whose-digits-are-only-1-or-0/answer/Saikat-Ghosh-183?share=d10017df&srid=F7Hz
+
+This can be proved with the Pigeonhole Principle. 
+
+It's very unintuitive and beautiful to use Bredth first search here when there's no graph !
+
+Instead of starting with the number and going through all of it's multiples and checking which one has only 0s and 1s. (There will be problems with BigInteger too here)
+
+We can go through numbers which have only 1s and 0s.
+
+Start with 1, and then append a 0 and then a 1 at the end of every number. Stop when the remainder = 0.
+
+-------------------------------------------------------------------------------------------------------------
+
+void solve()
+{
+    int n;
+    scanf("%d", &n);
+
+    queue <string> number;
+    queue <int> remainder;
+
+    number.push("1");
+    remainder.push(1%n);
+
+    while(true)
+    {
+        int current_remainder = remainder.front();
+        string current_number = number.front();
+
+        if(current_remainder == 0)
+        {
+            cout << current_number << '\n';
+            return;
+        }
+
+        number.push(current_number + "0");
+        number.push(current_number + "1");
+        number.pop();
+
+        remainder.push((current_remainder*10)%n);
+        remainder.push((current_remainder*10 + 1)%n);
+        remainder.pop();
+    }
+}
