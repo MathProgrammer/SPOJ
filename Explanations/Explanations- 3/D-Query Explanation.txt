@@ -1,10 +1,10 @@
 
-Let us say we have an array of  $1$’s and $ 0$’s. How do we find the sum of intervals of this array and support quick updates ? 
+Let us say we have an array of  $1$â€™s and $ 0$â€™s. How do we find the sum of intervals of this array and support quick updates ? 
 Segment tree. This is just a simple sum tree. Now, let us reduce the above problem to this question. 
 
 
 
-(Firstly, observe that the number of distinct elements in the range $[L, R]$ is equal to the number of elements who’s last occurence $[1, R]$ is  $>= L$. )
+(Firstly, observe that the number of distinct elements in the range $[L, R]$ is equal to the number of elements whoâ€™s last occurence $[1, R]$ is  $>= L$. )
 
 
 
@@ -40,7 +40,7 @@ We just need to check how many of them are after $L$
 
 Since, the array $A$ holds $1$ if it is the last occurence, we just find the sum $[L, R]$
 
-The number of  $1$’s in that range gives us the number of elements who’s last occurence  $>= L$
+The number of  $1$â€™s in that range gives us the number of elements whoâ€™s last occurence  $>= L$
 
 
 
@@ -50,7 +50,7 @@ Now, how do we efficiently get all queries with $R = i $efficiently without degr
 
 Treat everything as an event. 
 
-There are two kinds of events - Sum events and Query events.
+There are two kinds of events - Insertion events and Query events.
 
 
 For insertion event, we need  ---> Position, value. 
@@ -67,13 +67,13 @@ This is $O((N + Q) log(N + Q))$
 Then go through the events one by one. 
 
 
-If it’s an insertion, set $A[L[v]] = 0$ and $A[i] = 1$
+If itâ€™s an insertion, set $A[L[v]] = 0$ and $A[i] = 1$
 
 with appropriate updates on the sum tree. 
 
 
 
-If it’s a query event, return the number of $1$’s (sum) in the range $[L, R]$
+If itâ€™s a query event, return the number of $1$â€™s (sum) in the range $[L, R]$
 
 ----------------------------------------------------------------------------
 
