@@ -7,7 +7,7 @@ using namespace std;
 #define RIGHT(n) ( (n << 1)|1 )
 
 const int INSERTION = 0, QUERY = 1, MAX_N = 1e6 + 5, OLD_LAST_OCCURENCE = 0, NEW_LAST_OCCURENCE = 1;
-int tree[3*MAX_N];
+int sum_tree[3*MAX_N];
 
 struct info
 {
@@ -37,9 +37,9 @@ void insert(int n, int left, int right, int position, int position_type)
     if(left == right)
     {
         if(position_type == OLD_LAST_OCCURENCE)
-            tree[n] = 0;
+            sum_tree[n] = 0;
         else if(position_type == NEW_LAST_OCCURENCE)
-            tree[n] = 1;
+            sum_tree[n] = 1;
 
         return;
     }
@@ -51,7 +51,7 @@ void insert(int n, int left, int right, int position, int position_type)
     else if(position > mid)
         insert(RIGHT(n), mid + 1, right, position, position_type);
 
-    tree[n] = tree[LEFT(n)] + tree[RIGHT(n)];
+    sum_tree[n] = sum_tree[LEFT(n)] + sum_tree[RIGHT(n)];
 }
 
 int query(int n, int left, int right, int query_left, int query_right)
@@ -60,7 +60,7 @@ int query(int n, int left, int right, int query_left, int query_right)
        return 0;
 
     if(query_left <= left && right <= query_right)
-        return tree[n];
+        return sum_tree[n];
 
     int mid = (left + right) >> 1;
 
@@ -72,7 +72,7 @@ int query(int n, int left, int right, int query_left, int query_right)
 
 int main()
 {
-    memset(tree, 0, sizeof(tree));
+    memset(sum_tree, 0, sizeof(sum_tree));
 
     vector <info> event;
 
