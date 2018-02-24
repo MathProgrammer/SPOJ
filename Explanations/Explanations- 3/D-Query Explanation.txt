@@ -1,0 +1,204 @@
+
+Let us say we have an array of  $1$’s and $ 0$’s. How do we find the sum of intervals of this array and support quick updates ? 
+Segment tree. This is just a simple sum tree. Now, let us reduce the above problem to this question. 
+
+
+
+(Firstly, observe that the number of distinct elements in the range $[L, R]$ is equal to the number of elements who’s last occurence $[1, R]$ is  $>= L$. )
+
+
+
+Let us maintain an array of length $ N$.
+
+$A[i] = 1$, if position $i$ is the last occurence of some element.
+
+$A[i] = 0$, otherwise.
+
+Now, one by one, we will insert elements into this tree. 
+
+
+Let us say the current element is $v$
+We make the $A[L[v]] = 0$  and $A[i] = 1$
+
+Where$ L[v] $represents the last occurence of $v $
+
+Prior to this insertion.
+
+Update the sum tree accordingly. 
+
+
+
+Now, check if any query ends at $i$. 
+
+For all queries with $R = i$
+
+There is sufficient information to answer it. 
+
+We know the last occurence of every element upto $R$. 
+We just need to check how many of them are after $L$
+
+
+Since, the array $A$ holds $1$ if it is the last occurence, we just find the sum $[L, R]$
+
+The number of  $1$’s in that range gives us the number of elements who’s last occurence  $>= L$
+
+
+
+Now, how do we efficiently get all queries with $R = i $efficiently without degrading to $O(NQ)$
+
+
+
+Treat everything as an event. 
+
+There are two kinds of events - Sum events and Query events.
+
+
+For insertion event, we need  ---> Position, value. 
+
+
+For query event, we need ---> Left, right, query_no.
+
+
+Sort all the events by the following criteria  ---> (Position, for insertion), (Right, for queries)
+
+
+This is $O((N + Q) log(N + Q))$
+
+Then go through the events one by one. 
+
+
+If it’s an insertion, set $A[L[v]] = 0$ and $A[i] = 1$
+
+with appropriate updates on the sum tree. 
+
+
+
+If it’s a query event, return the number of $1$’s (sum) in the range $[L, R]$
+
+----------------------------------------------------------------------------
+
+struct info
+{
+    int end;
+    int type;
+    int position, value;
+    int left, right, query_no;
+
+    info(){ end = type = left = right = query_no = position = -1; }
+};
+
+int compare_ends(const info &A, const info &B)
+{
+    if(A.end < B.end)
+        return true;
+    else if(A.end == B.end)
+        return (A.type == INSERTION);
+
+    return false;
+}
+
+void insert(int n, int left, int right, int position, int position_type)
+{
+    if(right < position || position < left)
+        return;
+
+    if(left == right)
+    {
+        if(position_type == OLD_LAST_OCCURENCE)
+            tree[n] = 0;
+        else if(position_type == NEW_LAST_OCCURENCE)
+            tree[n] = 1;
+
+        return;
+    }
+
+    int mid = (left + right) >> 1;
+
+    if(position <= mid)
+        insert(LEFT(n), left, mid, position, position_type);
+    else if(position > mid)
+        insert(RIGHT(n), mid + 1, right, position, position_type);
+
+    tree[n] = tree[LEFT(n)] + tree[RIGHT(n)];
+}
+
+int query(int n, int left, int right, int query_left, int query_right)
+{
+   if(query_right < left || right < query_left)
+       return 0;
+
+    if(query_left <= left && right <= query_right)
+        return tree[n];
+
+    int mid = (left + right) >> 1;
+
+    int left_answer = query(LEFT(n), left, mid, query_left, query_right);
+    int right_answer = query(RIGHT(n), mid + 1, right, query_left, query_right);
+
+    return (left_answer + right_answer);
+}
+
+int main()
+{
+    memset(tree, 0, sizeof(tree));
+
+    vector <info> event;
+
+    int no_of_elements;
+    scanf("%d", &no_of_elements);
+    for(int i = 1; i <= no_of_elements; i++)
+    {
+        info current_event;
+        current_event.type = INSERTION;
+        current_event.end = current_event.position = i;
+        scanf("%d", &current_event.value);
+
+        event.push_back(current_event);
+    }
+
+    int no_of_queries;
+    scanf("%d", &no_of_queries);
+    for(int i = 1; i <= no_of_queries; i++)
+    {
+        info current_event;
+        current_event.type = QUERY;
+
+        scanf("%d %d", &current_event.left, &current_event.right);
+        current_event.end = current_event.right;
+        current_event.query_no = i;
+
+        event.push_back(current_event);
+    }
+
+    sort(all(event), compare_ends);
+
+    int no_of_events = no_of_elements + no_of_queries;
+
+    map <int, int> last_occurence;
+    vector <int> answer(no_of_queries + 1);
+
+    for(int i = 0; i < no_of_events; i++)
+    {
+       if(event[i].type == INSERTION)
+       {
+           int element = event[i].value;
+
+           if(last_occurence.count(element) == 1)
+           {
+               insert(1, 1, no_of_elements, last_occurence[element], OLD_LAST_OCCURENCE);
+           }
+
+           insert(1, 1, no_of_elements, event[i].position, NEW_LAST_OCCURENCE);
+           last_occurence[element] = event[i].position;
+       }
+       else if(event[i].type == QUERY)
+       {
+           answer[event[i].query_no] = query(1, 1, no_of_elements, event[i].left, event[i].right);
+       }
+    }
+
+    for(int i = 1; i <= no_of_queries; i++)
+        printf("%d\n", answer[i]);
+
+    return 0;
+}
